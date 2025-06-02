@@ -49,7 +49,7 @@
     cupertino_icons: ^1.0.8
     get: ^4.7.2
     shared_preferences: ^2.5.3
-    http: ^1.4.0
+    http: any
     fluttertoast: ^8.2.12
 
   dev_dependencies:
