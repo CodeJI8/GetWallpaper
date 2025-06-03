@@ -35,7 +35,7 @@ class ApiClient {
     return await fetchWallpapers("curated");
   }
 
-  // static Future<List<PhotosModel>> searchWallpapers(String query) async {
-  //   return await fetchWallpapers("search?query=$query");
-  // }
+  static Future<List<PhotosModel>> searchWallpapers(String query) async {
+    return await fetchWallpapers("search?query=$query");
+  }
 }
