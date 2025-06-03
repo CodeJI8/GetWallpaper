@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:getx/controller/api.dart';
 import 'package:getx/model/photos_model.dart';
@@ -6,9 +5,11 @@ import 'package:getx/widgets/SearchBar.dart';
 import 'package:getx/widgets/app_bar.dart';
 import 'package:getx/widgets/cat_block.dart';
 
+import '../model/categoryModel.dart';
+
 class HomeScreen extends StatefulWidget {
   final String src;
-  HomeScreen({super.key, required this.src});
+  const HomeScreen({super.key, required this.src});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -16,14 +17,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<PhotosModel> trendingList = [];
-
+  List<CategoryModel> categoryList = [];
   bool isLoading = true;
 
   void getTrendingWallpaper() async {
     try {
-      print("[DEBUG] Fetching trending wallpapers...");
       List<PhotosModel> wallpapers = await ApiClient.getTrendingWallpapers();
-      print("[DEBUG] Wallpapers fetched: ${wallpapers.length}");
       setState(() {
         trendingList = wallpapers;
         isLoading = false;
@@ -36,31 +35,29 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void getCategoryList() async {
+    try {
+      List<CategoryModel> cats = await ApiClient.getCategoriesList();
+      setState(() {
+        categoryList = cats;
+      });
+    } catch (e) {
+      print("[ERROR] Failed to fetch categories: $e");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     getTrendingWallpaper();
+    getCategoryList();
   }
 
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      // Show loading spinner while fetching data
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (trendingList.isEmpty) {
-      // Show message if no wallpapers found
-      return Scaffold(
-        appBar: AppBar(
-          title: Myappbar(word1: "Wallpaper", word2: "Jit"),
-          centerTitle: true,
-        ),
-        body: const Center(
-          child: Text("No wallpapers found."),
-        ),
       );
     }
 
@@ -71,29 +68,35 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            MySearchBar(query: ''),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 100,
-              width: MediaQuery.of(context).size.width,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: trendingList.length,
-                itemBuilder: (context, index) {
-                  final photo = trendingList[index];
-                  return CatBlock(
-                    imgSrc: photo.src,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              MySearchBar(query: ''),
+              const SizedBox(height: 16),
 
-                  );
-                },
+              // Category List
+              SizedBox(
+                height: 50,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: categoryList.length,
+                  itemBuilder: (context, index) {
+                    final cat = categoryList[index];
+                    return CatBlock(
+                      imgSrc: cat.catImgUrl,
+                      categoryName: cat.catName,
+                    );
+                  },
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: GridView.builder(
+
+              const SizedBox(height: 16),
+
+              // Wallpapers Grid
+              GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
                 itemCount: trendingList.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -115,8 +118,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
