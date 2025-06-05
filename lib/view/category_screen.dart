@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:getx/widgets/SearchBar.dart';
 import 'package:getx/widgets/app_bar.dart';
-
 import '../controller/api.dart';
 import '../model/photos_model.dart';
 

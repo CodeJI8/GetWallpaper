@@ -1,11 +1,9 @@
-// lib/api/api_client.dart
 import 'dart:convert';
 import 'dart:math';
+import 'package:http/http.dart' as http; // ✅ Fixed import
 
-import 'package:http/http.dart' as http;
 import '../model/categoryModel.dart';
 import '../model/photos_model.dart';
-
 
 class ApiClient {
   static const String _baseUrl = "https://api.pexels.com/v1";

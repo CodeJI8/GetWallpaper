@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:getx/controller/api.dart';
 import 'package:getx/model/photos_model.dart';
+import 'package:getx/view/full_screen.dart';
 import 'package:getx/widgets/SearchBar.dart';
 import 'package:getx/widgets/app_bar.dart';
 import 'package:getx/widgets/cat_block.dart';
@@ -106,13 +107,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 itemBuilder: (context, index) {
                   final photo = trendingList[index];
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(10),
-                      image: DecorationImage(
-                        image: NetworkImage(photo.src),
-                        fit: BoxFit.cover,
+                  return InkWell(
+                    onTap: (){
+                      Navigator.push(context ,MaterialPageRoute(builder: (context)=> FullScreen(imgUrl:  trendingList[index].src)));
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(10),
+                        image: DecorationImage(
+                          image: NetworkImage(photo.src),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   );
